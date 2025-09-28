@@ -1,42 +1,51 @@
-// Constantes para la API de TMDb
-const API_KEY = '21d85b4f5bb54a791da2ef0cfa984f62'; 
+const API_KEY = '21d85b4f5bb54a791da2ef0cfa984f62';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
-// Referencias a elementos del DOM
+// Referencias a elementos del DOM 
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const resultsContainer = document.getElementById('results-container');
 
-// Elementos de navegación y vistas
+// Elementos de navegación y vistas 
 const homeLink = document.getElementById('home-link');
 const favoritesLink = document.getElementById('favorites-link');
 const searchView = document.getElementById('search-view');
 const detailsView = document.getElementById('details-view');
 const favoritesView = document.getElementById('favorites-view'); 
 const backToSearchButton = document.getElementById('back-to-search');
+const backFromFavoritesButton = document.getElementById('back-from-favorites'); 
 const contentDetailsContainer = document.getElementById('content-details');
+const favoritesListContainer = document.getElementById('favorites-list'); 
 
-// --- Gestión de Vistas ---
+// --- Gestión de Vistas --- 
 function showView(viewToShow) {
-    // Oculta todas las vistas
     const allViews = document.querySelectorAll('.view');
     allViews.forEach(view => view.classList.remove('active'));
-    // Muestra la vista deseada
     viewToShow.classList.add('active');
 }
 
-// Event Listeners para la navegación
+// Event Listeners para la navegación 
 homeLink.addEventListener('click', (e) => {
     e.preventDefault();
     showView(searchView);
+});
+
+favoritesLink.addEventListener('click', (e) => { 
+    e.preventDefault();
+    showView(favoritesView);
 });
 
 backToSearchButton.addEventListener('click', () => {
     showView(searchView);
 });
 
-// --- Funcionalidad de Búsqueda (ya existente) ---
+backFromFavoritesButton.addEventListener('click', () => { 
+    showView(searchView);
+});
+
+
+// --- Funcionalidad de Búsqueda --- 
 searchForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const query = searchInput.value.trim();
@@ -100,26 +109,25 @@ function displayResults(results) {
         resultsContainer.appendChild(card);
     });
 
-    // Añade el event listener para los botones de detalles DESPUÉS de que se rendericen
     document.querySelectorAll('.card-button.details').forEach(button => {
         button.addEventListener('click', (e) => {
             const id = e.target.dataset.id;
             const type = e.target.dataset.type;
-            fetchDetails(id, type); // Llama a la función para obtener y mostrar detalles
+            fetchDetails(id, type);
         });
     });
 }
 
-// --- Funcionalidad de Detalles ---
+// --- Funcionalidad de Detalles  ---
 async function fetchDetails(id, type) {
     contentDetailsContainer.innerHTML = '<p class="placeholder-text">Cargando detalles...</p>';
-    showView(detailsView); // Muestra la vista de detalles
+    showView(detailsView);
 
     try {
         const response = await fetch(`${BASE_URL}/${type}/${id}?api_key=${API_KEY}&language=es-ES`);
         const details = await response.json();
 
-        displayDetails(details, type); // Muestra los detalles obtenidos
+        displayDetails(details, type);
     } catch (error) {
         console.error(`Error al obtener detalles de ${type} con ID ${id}:`, error);
         contentDetailsContainer.innerHTML = '<p class="placeholder-text">Error al cargar los detalles. Inténtalo de nuevo.</p>';
@@ -135,7 +143,7 @@ function displayDetails(details, type) {
     const overview = details.overview || 'No hay sinopsis disponible.';
     const voteAverage = details.vote_average ? details.vote_average.toFixed(1) : 'N/A';
     const genres = details.genres ? details.genres.map(genre => genre.name).join(', ') : 'N/A';
-    const director = details.crew ? details.crew.find(person => person.job === 'Director')?.name : 'N/A'; // Solo para películas
+    const director = details.credits && details.credits.crew ? details.credits.crew.find(person => person.job === 'Director')?.name : 'N/A';
 
     contentDetailsContainer.innerHTML = `
         <img src="${posterPath}" alt="${title} Poster" class="details-poster">
@@ -153,7 +161,6 @@ function displayDetails(details, type) {
     `;
 }
 
-// Inicializa la vista por defecto al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
     showView(searchView);
 });
