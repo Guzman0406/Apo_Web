@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Content Finder</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
@@ -21,6 +22,15 @@
 
     <main class="container app-container">
         <section id="search-view" class="view active">
+            <h2 class="section-title">Encuentra tu próximo contenido favorito</h2>
+            <form id="search-form" class="search-form">
+                <input type="text" id="search-input" placeholder="Buscar películas o series..." required>
+                <button type="submit">Buscar</button>
+            </form>
+
+            <div id="results-container" class="results-grid">
+                <p class="placeholder-text">¡Empieza a buscar películas o series!</p>
+            </div>
         </section>
 
         <section id="details-view" class="view hidden">
